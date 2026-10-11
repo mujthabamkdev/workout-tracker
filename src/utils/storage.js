@@ -29,24 +29,32 @@ export const DEFAULT_WORKOUT_PLAN = [
         name: "Incline Dumbbell Press",
         sets: 3,
         reps: "8-10",
+        tempo: "3-1-1-0",
+        form: "3s slow eccentric, pause 1s at deep chest stretch, push explosively without locking elbows",
         youtubeLink: "https://youtube.com/shorts/L9UKMQw1Nss?si=nNqGHraxdi2A4IIk"
       },
       {
         name: "Chest-Supported Row",
         sets: 3,
         reps: "10-12",
+        tempo: "2-0-1-1",
+        form: "Lead with elbows, pause 1s in peak contraction, 2s controlled stretch on negative",
         youtubeLink: "https://www.youtube.com/watch?v=0UBRfiO4zDs"
       },
       {
         name: "Overhead Cable Triceps Extension",
         sets: 3,
         reps: "12-15",
+        tempo: "3-1-1-0",
+        form: "Fix elbows beside ears, pause 1s at full elbow flexion, press forward and flare wrists",
         youtubeLink: "https://www.youtube.com/watch?v=1u18yJQL_c8"
       },
       {
         name: "Incline Dumbbell Bicep Curl",
         sets: 3,
         reps: "10-12",
+        tempo: "3-0-1-1",
+        form: "Full stretch at bottom, supinate wrists on way up, hold peak contraction for 1s",
         youtubeLink: "https://www.youtube.com/watch?v=soxrZlIl35U"
       }
     ]
@@ -59,24 +67,32 @@ export const DEFAULT_WORKOUT_PLAN = [
         name: "Barbell Romanian Deadlift",
         sets: 4,
         reps: "8-10",
+        tempo: "3-1-1-0",
+        form: "Hinge at hips, keep bar close to shins, pause 1s at hamstring stretch, drive hips through",
         youtubeLink: "https://www.youtube.com/watch?v=JCXUYuzwNrM"
       },
       {
         name: "Bulgarian Split Squat",
         sets: 3,
         reps: "10-12",
+        tempo: "3-1-1-0",
+        form: "Descend for 3s, pause 1s hovering above floor, drive through front midfoot to rise",
         youtubeLink: "https://www.youtube.com/watch?v=2C-uNgKwPLE"
       },
       {
         name: "Standing Calf Raise",
         sets: 4,
         reps: "12-15",
+        tempo: "2-2-1-2",
+        form: "Drop heels for 2s stretch, explode up onto balls of feet, hold 2s hard contraction",
         youtubeLink: "https://www.youtube.com/watch?v=YMmgqO8Jo-k"
       },
       {
         name: "Hanging Leg Raise",
         sets: 3,
         reps: "12-15",
+        tempo: "2-0-1-1",
+        form: "Curl pelvis upwards, pause 1s at top, lower under control without swinging hips",
         youtubeLink: "https://www.youtube.com/watch?v=hdng3Nm1x_E"
       }
     ]

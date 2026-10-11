@@ -153,17 +153,37 @@ export default function WorkoutView({
             >
               {/* Exercise Header */}
               <div className="p-4 border-b border-zinc-900 flex flex-wrap items-center justify-between gap-3 bg-zinc-900/40">
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-mono text-zinc-500">0{exIdx + 1}</span>
                     <h3 className="font-semibold text-sm sm:text-base text-zinc-100">
                       {exercise.name}
                     </h3>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6">
+
+                  {/* Below workout name: Form execution cue */}
+                  {exercise.form && (
+                    <p className="text-xs text-zinc-400 pl-6 leading-relaxed">
+                      <span className="text-zinc-500 font-mono text-[10px] uppercase tracking-wider mr-1.5">Form:</span>
+                      {exercise.form}
+                    </p>
+                  )}
+
+                  {/* Right to reps: Sets, Reps, and Tempo / Pause speed */}
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-400 pl-6 pt-0.5">
                     <span>{exercise.sets} Sets</span>
                     <span>•</span>
                     <span>{exercise.reps} Reps</span>
+                    {(exercise.tempo || exercise.pause || exercise.speed) && (
+                      <>
+                        <span>•</span>
+                        <span className="font-mono text-[11px] text-zinc-300 bg-zinc-900/90 px-1.5 py-0.5 rounded border border-zinc-800">
+                          {exercise.tempo ? `Tempo: ${exercise.tempo}` : ''}
+                          {exercise.speed && !exercise.tempo ? `Speed: ${exercise.speed}` : ''}
+                          {exercise.pause ? ` | Pause: ${exercise.pause}` : ''}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
 

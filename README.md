@@ -39,12 +39,14 @@ The app supports importing structured plans using this format:
       "day": "Day 1",
       "focus": "Upper Clavicular & Posterior Chain",
       "exercises": [
-        {
-          "name": "Incline Dumbbell Press",
-          "sets": 3,
-          "reps": "8-10",
-          "youtubeLink": "https://youtube.com/shorts/L9UKMQw1Nss"
-        }
+          {
+            "name": "Incline Dumbbell Press",
+            "sets": 3,
+            "reps": "8-10",
+            "tempo": "3-1-1-0",
+            "form": "3s slow eccentric, pause 1s at deep chest stretch, push explosively without locking elbows",
+            "youtubeLink": "https://youtube.com/shorts/L9UKMQw1Nss"
+          }
       ]
     }
   ],
