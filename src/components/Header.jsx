@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Code, Download, Flame } from 'lucide-react';
+import { Code, Download, Flame } from 'lucide-react';
 
 export default function Header({
   onOpenAiExport,
@@ -56,14 +56,13 @@ export default function Header({
             <span>JSON</span>
           </button>
 
-          {/* AI Coach Export */}
+          {/* Export */}
           <button
             onClick={onOpenAiExport}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg text-xs transition"
-            title="Export progression to AI Coach"
+            className="px-3 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg text-xs transition"
+            title="Export progression"
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>AI Export</span>
+            Export
           </button>
         </div>
       </div>
