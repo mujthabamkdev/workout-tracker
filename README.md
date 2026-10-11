@@ -25,6 +25,15 @@ The app supports importing structured plans using this format:
 
 ```json
 {
+  "profile": {
+    "weight": 76.5,
+    "height": 178,
+    "neck": 38.5,
+    "waist": 83.0,
+    "goalBodyFat": 12,
+    "bodyType": "Mesomorph",
+    "trainingDays": 4
+  },
   "workoutPlan": [
     {
       "day": "Day 1",

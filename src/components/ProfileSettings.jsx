@@ -9,14 +9,26 @@ export default function ProfileSettings({
   showToast
 }) {
   const [formData, setFormData] = useState({
-    weight: profile?.weight ?? 76.5,
-    height: profile?.height ?? 178,
-    neck: profile?.neck ?? 38.5,
-    waist: profile?.waist ?? 83.0,
-    goalBodyFat: profile?.goalBodyFat ?? 12.0,
+    weight: profile?.weight ?? '',
+    height: profile?.height ?? '',
+    neck: profile?.neck ?? '',
+    waist: profile?.waist ?? '',
+    goalBodyFat: profile?.goalBodyFat ?? '',
     bodyType: profile?.bodyType ?? 'Mesomorph',
     trainingDays: profile?.trainingDays ?? 4
   });
+
+  React.useEffect(() => {
+    setFormData({
+      weight: profile?.weight ?? '',
+      height: profile?.height ?? '',
+      neck: profile?.neck ?? '',
+      waist: profile?.waist ?? '',
+      goalBodyFat: profile?.goalBodyFat ?? '',
+      bodyType: profile?.bodyType ?? 'Mesomorph',
+      trainingDays: profile?.trainingDays ?? 4
+    });
+  }, [profile]);
 
   const calculatedBF = calculateBodyFat(formData.waist, formData.neck, formData.height);
 

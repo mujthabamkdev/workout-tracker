@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { X, Check, Copy, RotateCcw } from 'lucide-react';
-import { DEFAULT_WORKOUT_PLAN, DEFAULT_DIET_PLAN } from '../utils/storage';
+import { DEFAULT_WORKOUT_PLAN, DEFAULT_DIET_PLAN, DEFAULT_PROFILE } from '../utils/storage';
 
 export default function JsonManagerModal({
   isOpen,
   onClose,
+  profile,
   workoutPlan,
   dietPlan,
   onUpdatePlan,
@@ -18,6 +19,7 @@ export default function JsonManagerModal({
 
   const currentPlanJson = JSON.stringify(
     {
+      profile: profile || DEFAULT_PROFILE,
       workoutPlan: workoutPlan || DEFAULT_WORKOUT_PLAN,
       dietPlan: dietPlan || DEFAULT_DIET_PLAN
     },
@@ -33,6 +35,15 @@ export default function JsonManagerModal({
   const handleLoadSample = () => {
     const sample = JSON.stringify(
       {
+        profile: {
+          weight: 76.5,
+          height: 178,
+          neck: 38.5,
+          waist: 83.0,
+          goalBodyFat: 12.0,
+          bodyType: "Mesomorph",
+          trainingDays: 4
+        },
         workoutPlan: DEFAULT_WORKOUT_PLAN,
         dietPlan: DEFAULT_DIET_PLAN
       },
@@ -60,8 +71,12 @@ export default function JsonManagerModal({
         throw new Error('Root JSON must be an object.');
       }
 
-      if (!parsed.workoutPlan && !parsed.dietPlan) {
-        throw new Error('JSON must contain at least "workoutPlan" or "dietPlan".');
+      if (!parsed.profile && !parsed.workoutPlan && !parsed.dietPlan) {
+        throw new Error('JSON must contain at least "profile", "workoutPlan", or "dietPlan".');
+      }
+
+      if (parsed.profile && typeof parsed.profile !== 'object') {
+        throw new Error('"profile" must be an object.');
       }
 
       if (parsed.workoutPlan && !Array.isArray(parsed.workoutPlan)) {
@@ -73,12 +88,13 @@ export default function JsonManagerModal({
       }
 
       onUpdatePlan({
+        newProfile: parsed.profile || null,
         newWorkoutPlan: parsed.workoutPlan || null,
         newDietPlan: parsed.dietPlan || null
       });
 
       setValidationSuccess(true);
-      showToast('Plan updated. Historical logs preserved.');
+      showToast('Plan & profile updated. Historical logs preserved.');
       setTimeout(() => {
         onClose();
       }, 700);
@@ -93,8 +109,8 @@ export default function JsonManagerModal({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-900 bg-zinc-950">
           <div>
-            <h3 className="font-semibold text-sm text-zinc-100">Sync Plan JSON</h3>
-            <p className="text-[11px] text-zinc-500">Updates active routine without modifying logs</p>
+            <h3 className="font-semibold text-sm text-zinc-100">Sync Plan & Profile JSON</h3>
+            <p className="text-[11px] text-zinc-500">Updates profile stats, routine & diet without modifying logs</p>
           </div>
           <button
             onClick={onClose}
@@ -132,7 +148,7 @@ export default function JsonManagerModal({
               setValidationError(null);
               setValidationSuccess(false);
             }}
-            placeholder="Paste your JSON here..."
+            placeholder={`{\n  "profile": {\n    "weight": 76.5,\n    "height": 178,\n    "neck": 38.5,\n    "waist": 83.0,\n    "goalBodyFat": 12,\n    "bodyType": "Mesomorph",\n    "trainingDays": 4\n  },\n  "workoutPlan": [ ... ],\n  "dietPlan": { ... }\n}`}
             className="w-full flex-1 min-h-[220px] bg-zinc-900/50 border border-zinc-800 rounded-lg p-3 font-mono text-xs text-zinc-200 outline-none focus:border-zinc-500 resize-none"
           />
 
@@ -141,7 +157,7 @@ export default function JsonManagerModal({
           )}
 
           {validationSuccess && (
-            <p className="text-xs text-zinc-300 font-mono">✓ Successfully applied</p>
+            <p className="text-xs text-zinc-300 font-mono">✓ Successfully applied to profile & plans</p>
           )}
         </div>
 
@@ -157,7 +173,7 @@ export default function JsonManagerModal({
             onClick={handleValidateAndApply}
             className="px-4 py-2 bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg text-xs transition"
           >
-            Apply Plan
+            Apply Plan & Profile
           </button>
         </div>
       </div>

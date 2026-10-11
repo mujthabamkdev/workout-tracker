@@ -88,7 +88,7 @@ export default function App() {
     saveToStorage(STORAGE_KEYS.PROFILE, newProfile);
   };
 
-  const handleUpdatePlan = ({ newWorkoutPlan, newDietPlan }) => {
+  const handleUpdatePlan = ({ newWorkoutPlan, newDietPlan, newProfile }) => {
     if (newWorkoutPlan) {
       setWorkoutPlan(newWorkoutPlan);
       saveToStorage(STORAGE_KEYS.WORKOUT_PLAN, newWorkoutPlan);
@@ -96,6 +96,13 @@ export default function App() {
     if (newDietPlan) {
       setDietPlan(newDietPlan);
       saveToStorage(STORAGE_KEYS.DIET_PLAN, newDietPlan);
+    }
+    if (newProfile) {
+      setProfile((prev) => {
+        const merged = { ...prev, ...newProfile };
+        saveToStorage(STORAGE_KEYS.PROFILE, merged);
+        return merged;
+      });
     }
   };
 
@@ -246,6 +253,7 @@ export default function App() {
       <JsonManagerModal
         isOpen={isJsonManagerOpen}
         onClose={() => setIsJsonManagerOpen(false)}
+        profile={profile}
         workoutPlan={workoutPlan}
         dietPlan={dietPlan}
         onUpdatePlan={handleUpdatePlan}
