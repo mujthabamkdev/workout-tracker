@@ -1,0 +1,322 @@
+import React, { useState } from 'react';
+import { Play, Plus, Trash2, Check, History, Calendar } from 'lucide-react';
+import YouTubeModal from './YouTubeModal';
+
+export default function WorkoutView({
+  workoutPlan = [],
+  workoutLogs = {},
+  onSaveWorkoutLog,
+  showToast
+}) {
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    return new Date().toISOString().split('T')[0];
+  });
+  const [videoModal, setVideoModal] = useState({ isOpen: false, name: '', url: '' });
+
+  const currentDay = workoutPlan && workoutPlan.length > 0 ? workoutPlan[selectedDayIndex] : null;
+
+  const getPreviousLogForExercise = (exerciseName) => {
+    const dates = Object.keys(workoutLogs || {})
+      .filter((d) => d < selectedDate && workoutLogs[d][exerciseName])
+      .sort((a, b) => b.localeCompare(a));
+
+    if (dates.length > 0) {
+      const prevDate = dates[0];
+      return {
+        date: prevDate,
+        sets: workoutLogs[prevDate][exerciseName]
+      };
+    }
+    return null;
+  };
+
+  const getActiveSets = (exerciseName, targetSetsCount) => {
+    const dateLogs = workoutLogs[selectedDate] || {};
+    if (dateLogs[exerciseName] && Array.isArray(dateLogs[exerciseName])) {
+      return dateLogs[exerciseName];
+    }
+
+    const count = parseInt(targetSetsCount) || 3;
+    return Array.from({ length: count }, (_, idx) => ({
+      set: idx + 1,
+      weight: '',
+      reps: '',
+      rpe: '',
+      completed: false
+    }));
+  };
+
+  const handleUpdateSet = (exerciseName, setIndex, field, value, totalSetsCount) => {
+    const currentSets = [...getActiveSets(exerciseName, totalSetsCount)];
+    currentSets[setIndex] = {
+      ...currentSets[setIndex],
+      [field]: value
+    };
+    onSaveWorkoutLog(selectedDate, exerciseName, currentSets);
+  };
+
+  const handleAddSet = (exerciseName, totalSetsCount) => {
+    const currentSets = [...getActiveSets(exerciseName, totalSetsCount)];
+    const lastSet = currentSets[currentSets.length - 1] || {};
+    currentSets.push({
+      set: currentSets.length + 1,
+      weight: lastSet.weight || '',
+      reps: lastSet.reps || '',
+      rpe: lastSet.rpe || '',
+      completed: false
+    });
+    onSaveWorkoutLog(selectedDate, exerciseName, currentSets);
+  };
+
+  const handleRemoveSet = (exerciseName, setIndex, totalSetsCount) => {
+    const currentSets = getActiveSets(exerciseName, totalSetsCount).filter((_, idx) => idx !== setIndex);
+    const renumbered = currentSets.map((s, idx) => ({ ...s, set: idx + 1 }));
+    onSaveWorkoutLog(selectedDate, exerciseName, renumbered);
+  };
+
+  const handleToggleComplete = (exerciseName, setIndex, totalSetsCount) => {
+    const currentSets = [...getActiveSets(exerciseName, totalSetsCount)];
+    const isCompleted = !currentSets[setIndex]?.completed;
+    currentSets[setIndex] = {
+      ...currentSets[setIndex],
+      completed: isCompleted
+    };
+    onSaveWorkoutLog(selectedDate, exerciseName, currentSets);
+  };
+
+  if (!workoutPlan || workoutPlan.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto p-8 text-center border border-zinc-900 rounded-xl my-6">
+        <p className="text-sm text-zinc-400">No workout plan found. Paste your AI plan JSON to get started.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5 pb-24 md:pb-12 max-w-6xl mx-auto">
+      {/* Top Controls: Day selector & Date picker */}
+      <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-zinc-900">
+          <div>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+              Workout Session
+            </span>
+            <h2 className="text-lg sm:text-xl font-semibold text-zinc-100">
+              {currentDay?.day || `Day ${selectedDayIndex + 1}`}: {currentDay?.focus || 'Routine'}
+            </h2>
+          </div>
+
+          {/* Session Date */}
+          <div className="flex items-center gap-2 bg-zinc-900/80 px-3 py-1.5 rounded-lg border border-zinc-800 text-xs self-start sm:self-auto">
+            <span className="text-zinc-500">Date:</span>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="bg-transparent text-zinc-200 outline-none cursor-pointer"
+            />
+          </div>
+        </div>
+
+        {/* Day selection tabs */}
+        <div className="flex gap-2 overflow-x-auto pt-3 pb-0.5 scrollbar-none">
+          {workoutPlan.map((day, idx) => {
+            const isSelected = selectedDayIndex === idx;
+            return (
+              <button
+                key={idx}
+                onClick={() => setSelectedDayIndex(idx)}
+                className={`flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  isSelected
+                    ? 'bg-zinc-100 text-zinc-900'
+                    : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
+                }`}
+              >
+                {day.day || `Day ${idx + 1}`}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Exercises List */}
+      <div className="space-y-4">
+        {currentDay?.exercises?.map((exercise, exIdx) => {
+          const sets = getActiveSets(exercise.name, exercise.sets);
+          const prevLog = getPreviousLogForExercise(exercise.name);
+
+          return (
+            <div
+              key={exIdx}
+              className="border border-zinc-900 bg-zinc-900/20 rounded-xl overflow-hidden"
+            >
+              {/* Exercise Header */}
+              <div className="p-4 border-b border-zinc-900 flex flex-wrap items-center justify-between gap-3 bg-zinc-900/40">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-zinc-500">0{exIdx + 1}</span>
+                    <h3 className="font-semibold text-sm sm:text-base text-zinc-100">
+                      {exercise.name}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6">
+                    <span>{exercise.sets} Sets</span>
+                    <span>•</span>
+                    <span>{exercise.reps} Reps</span>
+                  </div>
+                </div>
+
+                {/* Video Demo Button */}
+                {exercise.youtubeLink && (
+                  <button
+                    onClick={() =>
+                      setVideoModal({
+                        isOpen: true,
+                        name: exercise.name,
+                        url: exercise.youtubeLink
+                      })
+                    }
+                    className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg transition"
+                  >
+                    <Play className="w-3 h-3 text-zinc-400" />
+                    <span>Demo</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Previous session stats banner */}
+              {prevLog && (
+                <div className="px-4 py-2 bg-zinc-950/60 border-b border-zinc-900 flex items-center gap-2 text-xs text-zinc-500 font-mono">
+                  <History className="w-3 h-3 text-zinc-500 shrink-0" />
+                  <span>
+                    Last ({prevLog.date}):{' '}
+                    {prevLog.sets.map((s) => `${s.weight || 0}kg×${s.reps || 0}`).join('  ')}
+                  </span>
+                </div>
+              )}
+
+              {/* Logging Table */}
+              <div className="p-3 sm:p-4 overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="text-zinc-500 border-b border-zinc-900 text-[10px] uppercase font-mono tracking-wider">
+                      <th className="py-2 px-2 text-center w-10">Set</th>
+                      <th className="py-2 px-2 text-center w-28">Weight (kg)</th>
+                      <th className="py-2 px-2 text-center w-24">Reps</th>
+                      <th className="py-2 px-2 text-center w-20">RPE</th>
+                      <th className="py-2 px-2 text-center w-14">Done</th>
+                      <th className="py-2 px-1 text-center w-8"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-900/60">
+                    {sets.map((setObj, setIdx) => (
+                      <tr
+                        key={setIdx}
+                        className={setObj.completed ? 'bg-zinc-900/30' : ''}
+                      >
+                        <td className="py-2 px-2 text-center text-zinc-500 font-mono text-xs">
+                          {setObj.set || setIdx + 1}
+                        </td>
+
+                        <td className="py-2 px-2 text-center">
+                          <input
+                            type="number"
+                            step="0.5"
+                            placeholder="kg"
+                            value={setObj.weight ?? ''}
+                            onChange={(e) =>
+                              handleUpdateSet(exercise.name, setIdx, 'weight', e.target.value, exercise.sets)
+                            }
+                            className="w-full max-w-[100px] bg-zinc-900/60 border border-zinc-800 rounded-md px-2.5 py-1.5 text-center text-zinc-100 text-xs outline-none focus:border-zinc-500"
+                          />
+                        </td>
+
+                        <td className="py-2 px-2 text-center">
+                          <input
+                            type="number"
+                            placeholder={exercise.reps || 'reps'}
+                            value={setObj.reps ?? ''}
+                            onChange={(e) =>
+                              handleUpdateSet(exercise.name, setIdx, 'reps', e.target.value, exercise.sets)
+                            }
+                            className="w-full max-w-[80px] bg-zinc-900/60 border border-zinc-800 rounded-md px-2.5 py-1.5 text-center text-zinc-100 text-xs outline-none focus:border-zinc-500"
+                          />
+                        </td>
+
+                        <td className="py-2 px-2 text-center">
+                          <input
+                            type="number"
+                            step="0.5"
+                            min="1"
+                            max="10"
+                            placeholder="1-10"
+                            value={setObj.rpe ?? ''}
+                            onChange={(e) =>
+                              handleUpdateSet(exercise.name, setIdx, 'rpe', e.target.value, exercise.sets)
+                            }
+                            className="w-full max-w-[65px] bg-zinc-900/60 border border-zinc-800 rounded-md px-2 py-1.5 text-center text-zinc-100 text-xs outline-none focus:border-zinc-500"
+                          />
+                        </td>
+
+                        <td className="py-2 px-2 text-center">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleComplete(exercise.name, setIdx, exercise.sets)}
+                            className={`w-7 h-7 inline-flex items-center justify-center rounded-md border transition-colors ${
+                              setObj.completed
+                                ? 'bg-zinc-100 text-zinc-950 border-zinc-100'
+                                : 'bg-zinc-900 border-zinc-800 text-zinc-600 hover:text-zinc-300'
+                            }`}
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+
+                        <td className="py-2 px-1 text-center">
+                          {sets.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSet(exercise.name, setIdx, exercise.sets)}
+                              className="p-1 text-zinc-600 hover:text-zinc-300 transition"
+                              title="Delete set"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Add Set */}
+                <div className="pt-3 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => handleAddSet(exercise.name, exercise.sets)}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 rounded-md text-xs transition"
+                  >
+                    <Plus className="w-3 h-3 text-zinc-400" />
+                    <span>Add Set</span>
+                  </button>
+
+                  <span className="text-[11px] text-zinc-600 font-mono">
+                    auto-saved
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <YouTubeModal
+        isOpen={videoModal.isOpen}
+        onClose={() => setVideoModal({ isOpen: false, name: '', url: '' })}
+        exerciseName={videoModal.name}
+        youtubeLink={videoModal.url}
+      />
+    </div>
+  );
+}
