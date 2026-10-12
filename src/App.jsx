@@ -47,6 +47,12 @@ export default function App() {
     loadFromStorage(STORAGE_KEYS.DIET_LOGS, DEFAULT_DIET_LOGS)
   );
 
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('aegisfit_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+
   const [activeTab, setActiveTab] = useState('workout');
 
   const [isAiExportOpen, setIsAiExportOpen] = useState(false);
@@ -55,6 +61,19 @@ export default function App() {
 
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('aegisfit_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -160,8 +179,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-200 flex flex-col font-sans">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-200 flex flex-col font-sans transition-colors duration-150">
       <Header
+        theme={theme}
+        onToggleTheme={toggleTheme}
         onOpenAiExport={() => setIsAiExportOpen(true)}
         onOpenJsonManager={() => setIsJsonManagerOpen(true)}
         installPrompt={deferredPrompt}
@@ -206,6 +227,7 @@ export default function App() {
           <ProgressCharts
             measurementLogs={measurementLogs}
             profile={profile}
+            theme={theme}
           />
         )}
 
@@ -223,7 +245,7 @@ export default function App() {
       <div className="fixed bottom-16 md:bottom-6 right-5 z-40">
         <button
           onClick={() => setLogModalState({ isOpen: true, tab: 'diet' })}
-          className="flex items-center justify-center w-11 h-11 rounded-full bg-zinc-100 hover:bg-white text-zinc-950 shadow-md transition-transform active:scale-95"
+          className="flex items-center justify-center w-11 h-11 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 shadow-md transition-transform active:scale-95"
           title="Log food or vitals"
         >
           <Plus className="w-5 h-5" />
@@ -233,7 +255,7 @@ export default function App() {
       {/* Minimal Toast Notification */}
       {toastMessage && (
         <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 transition-all">
-          <div className="px-3.5 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs shadow-lg font-mono">
+          <div className="px-3.5 py-1.5 rounded-lg bg-zinc-900 dark:bg-zinc-900 border border-zinc-800 text-zinc-100 dark:text-zinc-200 text-xs shadow-lg font-mono">
             {toastMessage}
           </div>
         </div>

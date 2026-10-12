@@ -22,7 +22,8 @@ ChartJS.register(
   Legend
 );
 
-export default function ProgressCharts({ measurementLogs = [], profile }) {
+export default function ProgressCharts({ measurementLogs = [], profile, theme = 'dark' }) {
+  const isDark = theme === 'dark';
   const sortedLogs = [...measurementLogs].sort((a, b) => a.date.localeCompare(b.date));
   const goalBodyFat = profile?.goalBodyFat ? parseFloat(profile.goalBodyFat) : null;
 
@@ -48,11 +49,11 @@ export default function ProgressCharts({ measurementLogs = [], profile }) {
     {
       label: 'Calculated Body Fat %',
       data: sortedLogs.map((l) => l.bodyFat),
-      borderColor: '#f4f4f5',
+      borderColor: isDark ? '#f4f4f5' : '#18181b',
       backgroundColor: 'transparent',
       tension: 0.2,
-      pointBackgroundColor: '#f4f4f5',
-      pointBorderColor: '#09090b',
+      pointBackgroundColor: isDark ? '#f4f4f5' : '#18181b',
+      pointBorderColor: isDark ? '#09090b' : '#ffffff',
       pointBorderWidth: 1.5,
       pointRadius: 3,
       pointHoverRadius: 5,
@@ -64,7 +65,7 @@ export default function ProgressCharts({ measurementLogs = [], profile }) {
     datasets.push({
       label: `Goal Target (${goalBodyFat}%)`,
       data: sortedLogs.map(() => goalBodyFat),
-      borderColor: '#71717a',
+      borderColor: isDark ? '#71717a' : '#a1a1aa',
       borderDash: [5, 5],
       pointRadius: 0,
       borderWidth: 1.5
@@ -82,11 +83,11 @@ export default function ProgressCharts({ measurementLogs = [], profile }) {
       {
         label: 'Body Weight (kg)',
         data: sortedLogs.map((l) => l.weight),
-        borderColor: '#e4e4e7',
+        borderColor: isDark ? '#e4e4e7' : '#27272a',
         backgroundColor: 'transparent',
         tension: 0.2,
-        pointBackgroundColor: '#e4e4e7',
-        pointBorderColor: '#09090b',
+        pointBackgroundColor: isDark ? '#e4e4e7' : '#27272a',
+        pointBorderColor: isDark ? '#09090b' : '#ffffff',
         pointBorderWidth: 1.5,
         pointRadius: 3,
         pointHoverRadius: 5,
@@ -101,27 +102,27 @@ export default function ProgressCharts({ measurementLogs = [], profile }) {
     plugins: {
       legend: {
         labels: {
-          color: '#a1a1aa',
+          color: isDark ? '#a1a1aa' : '#52525b',
           boxWidth: 12,
           font: { size: 11 }
         }
       },
       tooltip: {
-        backgroundColor: '#18181b',
-        borderColor: '#27272a',
+        backgroundColor: isDark ? '#18181b' : '#ffffff',
+        borderColor: isDark ? '#27272a' : '#e4e4e7',
         borderWidth: 1,
-        titleColor: '#fafafa',
-        bodyColor: '#a1a1aa',
+        titleColor: isDark ? '#fafafa' : '#09090b',
+        bodyColor: isDark ? '#a1a1aa' : '#52525b',
         padding: 8
       }
     },
     scales: {
       x: {
-        grid: { color: 'rgba(39, 39, 42, 0.4)' },
+        grid: { color: isDark ? 'rgba(39, 39, 42, 0.4)' : 'rgba(228, 228, 231, 0.7)' },
         ticks: { color: '#71717a', font: { size: 11 } }
       },
       y: {
-        grid: { color: 'rgba(39, 39, 42, 0.4)' },
+        grid: { color: isDark ? 'rgba(39, 39, 42, 0.4)' : 'rgba(228, 228, 231, 0.7)' },
         ticks: { color: '#71717a', font: { size: 11 } }
       }
     }
@@ -131,55 +132,55 @@ export default function ProgressCharts({ measurementLogs = [], profile }) {
     <div className="space-y-5 pb-24 md:pb-12 max-w-6xl mx-auto">
       {/* Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4">
-          <span className="text-[10px] text-zinc-500 uppercase font-mono">Current BF</span>
-          <div className="text-2xl font-semibold text-zinc-100 mt-1">
+        <div className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-900/30 rounded-xl p-4 shadow-xs">
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-mono">Current BF</span>
+          <div className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
             {currentBF !== null ? `${currentBF}%` : '--'}
           </div>
-          <span className="text-[11px] text-zinc-500 font-mono">US Navy Formula</span>
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">US Navy Formula</span>
         </div>
 
-        <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4">
-          <span className="text-[10px] text-zinc-500 uppercase font-mono">Goal Target</span>
-          <div className="text-2xl font-semibold text-zinc-100 mt-1">
+        <div className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-900/30 rounded-xl p-4 shadow-xs">
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-mono">Goal Target</span>
+          <div className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
             {goalBodyFat !== null ? `${goalBodyFat}%` : '--'}
           </div>
-          <span className="text-[11px] text-zinc-500 font-mono">
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
             {bfToGoal !== null ? (parseFloat(bfToGoal) > 0 ? `${bfToGoal}% to target` : 'Achieved') : 'Not set'}
           </span>
         </div>
 
-        <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4">
-          <span className="text-[10px] text-zinc-500 uppercase font-mono">Current Weight</span>
-          <div className="text-2xl font-semibold text-zinc-100 mt-1">
+        <div className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-900/30 rounded-xl p-4 shadow-xs">
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-mono">Current Weight</span>
+          <div className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
             {currentWeight !== null ? `${currentWeight} kg` : '--'}
           </div>
-          <span className="text-[11px] text-zinc-500 font-mono">
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">
             {profile?.height ? `Height: ${profile.height}cm` : 'Height not set'}
           </span>
         </div>
 
-        <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4">
-          <span className="text-[10px] text-zinc-500 uppercase font-mono">Net Delta</span>
-          <div className="text-2xl font-semibold text-zinc-100 mt-1">
+        <div className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-900/30 rounded-xl p-4 shadow-xs">
+          <span className="text-[10px] text-zinc-400 dark:text-zinc-500 uppercase font-mono">Net Delta</span>
+          <div className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mt-1">
             {weightDiff !== '0.0' ? (parseFloat(weightDiff) > 0 ? `+${weightDiff} kg` : `${weightDiff} kg`) : '0.0 kg'}
           </div>
-          <span className="text-[11px] text-zinc-500 font-mono">{sortedLogs.length} data points</span>
+          <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-mono">{sortedLogs.length} data points</span>
         </div>
       </div>
 
       {/* Chart 1: Body Fat % vs Goal Line */}
-      <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4 sm:p-5">
-        <div className="pb-3 border-b border-zinc-900 flex items-center justify-between">
+      <div className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-900/30 rounded-xl p-4 sm:p-5 shadow-xs">
+        <div className="pb-3 border-b border-zinc-200 dark:border-zinc-900 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-zinc-200">Body Fat % Progression</h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">Body Fat % Progression</h3>
             <p className="text-xs text-zinc-500">Calculated trend vs target line</p>
           </div>
         </div>
 
         <div className="h-64 sm:h-72 w-full pt-3">
           {sortedLogs.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-zinc-600 text-xs">
+            <div className="h-full flex items-center justify-center text-zinc-400 dark:text-zinc-600 text-xs">
               No measurements recorded yet.
             </div>
           ) : (
@@ -189,17 +190,17 @@ export default function ProgressCharts({ measurementLogs = [], profile }) {
       </div>
 
       {/* Chart 2: Weight Progression */}
-      <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4 sm:p-5">
-        <div className="pb-3 border-b border-zinc-900 flex items-center justify-between">
+      <div className="border border-zinc-200 dark:border-zinc-900 bg-white dark:bg-zinc-900/30 rounded-xl p-4 sm:p-5 shadow-xs">
+        <div className="pb-3 border-b border-zinc-200 dark:border-zinc-900 flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-zinc-200">Weight Progression (kg)</h3>
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">Weight Progression (kg)</h3>
             <p className="text-xs text-zinc-500">Scale recordings over time</p>
           </div>
         </div>
 
         <div className="h-64 sm:h-72 w-full pt-3">
           {sortedLogs.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-zinc-600 text-xs">
+            <div className="h-full flex items-center justify-center text-zinc-400 dark:text-zinc-600 text-xs">
               No measurements recorded yet.
             </div>
           ) : (

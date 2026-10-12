@@ -87,27 +87,27 @@ export default function LogModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+      <div className="relative w-full max-w-md bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl overflow-hidden flex flex-col shadow-xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-900 bg-zinc-950">
-          <h3 className="font-semibold text-sm text-zinc-100">Quick Daily Log</h3>
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-900 bg-zinc-50/60 dark:bg-zinc-950">
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">Quick Daily Log</h3>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-500 hover:text-zinc-200 rounded-lg hover:bg-zinc-900 transition"
+            className="p-1.5 text-zinc-400 hover:text-zinc-700 dark:text-zinc-500 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab switch */}
-        <div className="flex p-1.5 gap-1.5 bg-zinc-900/50 border-b border-zinc-900">
+        <div className="flex p-1.5 gap-1.5 bg-zinc-100 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-900">
           <button
             onClick={() => setActiveTab('diet')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition ${
               activeTab === 'diet'
-                ? 'bg-zinc-800 text-zinc-100'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-zinc-100'
+                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
             }`}
           >
             Food / Meal
@@ -116,8 +116,8 @@ export default function LogModal({
             onClick={() => setActiveTab('vitals')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition ${
               activeTab === 'vitals'
-                ? 'bg-zinc-800 text-zinc-100'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white text-zinc-900 shadow-xs dark:bg-zinc-800 dark:text-zinc-100'
+                : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200'
             }`}
           >
             Weight / Vitals
@@ -129,56 +129,56 @@ export default function LogModal({
           {activeTab === 'diet' ? (
             <form onSubmit={handleDietSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900">
                   <label className="text-[10px] text-zinc-500 block mb-1">Date</label>
                   <input
                     type="date"
                     value={dietDate}
                     onChange={(e) => setDietDate(e.target.value)}
-                    className="w-full bg-transparent text-xs text-zinc-200 outline-none"
+                    className="w-full bg-transparent text-xs text-zinc-900 dark:text-zinc-200 outline-none"
                     required
                   />
                 </div>
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900">
                   <label className="text-[10px] text-zinc-500 block mb-1">Time</label>
                   <input
                     type="text"
                     value={dietTime}
                     onChange={(e) => setDietTime(e.target.value)}
                     placeholder="1:30 PM"
-                    className="w-full bg-transparent text-xs text-zinc-200 outline-none"
+                    className="w-full bg-transparent text-xs text-zinc-900 dark:text-zinc-200 outline-none"
                     required
                   />
                 </div>
               </div>
 
-              <div className="bg-zinc-900/50 p-3 rounded-lg border border-zinc-900">
-                <label className="text-xs text-zinc-400 block mb-1">Food Name (free-text)</label>
+              <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-zinc-200 dark:border-zinc-900">
+                <label className="text-xs text-zinc-500 dark:text-zinc-400 block mb-1">Food Name (free-text)</label>
                 <input
                   type="text"
                   placeholder="e.g. Chicken breast with white rice"
                   value={foodName}
                   onChange={(e) => setFoodName(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-100 outline-none focus:border-zinc-500"
+                  className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
                   autoFocus
                   required
                 />
               </div>
 
-              <div className="bg-zinc-900/50 p-3 rounded-lg border border-zinc-900">
-                <label className="text-xs text-zinc-400 block mb-1">Quantity / Notes</label>
+              <div className="bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-lg border border-zinc-200 dark:border-zinc-900">
+                <label className="text-xs text-zinc-500 dark:text-zinc-400 block mb-1">Quantity / Notes</label>
                 <input
                   type="text"
                   placeholder="e.g. 200g, 1 bowl"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-100 outline-none focus:border-zinc-500"
+                  className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg text-xs transition flex items-center justify-center gap-1.5 mt-2"
+                className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-medium rounded-lg text-xs transition flex items-center justify-center gap-1.5 mt-2"
               >
                 <Check className="w-3.5 h-3.5" /> Save Food Item
               </button>
@@ -186,30 +186,30 @@ export default function LogModal({
           ) : (
             <form onSubmit={handleVitalsSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900">
                   <label className="text-[10px] text-zinc-500 block mb-1">Date</label>
                   <input
                     type="date"
                     value={vitalsDate}
                     onChange={(e) => setVitalsDate(e.target.value)}
-                    className="w-full bg-transparent text-xs text-zinc-200 outline-none"
+                    className="w-full bg-transparent text-xs text-zinc-900 dark:text-zinc-200 outline-none"
                     required
                   />
                 </div>
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900">
                   <label className="text-[10px] text-zinc-500 block mb-1">Time</label>
                   <input
                     type="time"
                     value={vitalsTime}
                     onChange={(e) => setVitalsTime(e.target.value)}
-                    className="w-full bg-transparent text-xs text-zinc-200 outline-none"
+                    className="w-full bg-transparent text-xs text-zinc-900 dark:text-zinc-200 outline-none"
                     required
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2">
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900 text-center">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900 text-center">
                   <label className="text-[10px] text-zinc-500 block mb-1">Weight (kg)</label>
                   <input
                     type="number"
@@ -217,11 +217,11 @@ export default function LogModal({
                     placeholder="76.5"
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-center text-xs font-semibold text-zinc-100 outline-none focus:border-zinc-500"
+                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-1 text-center text-xs font-semibold text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
                     required
                   />
                 </div>
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900 text-center">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900 text-center">
                   <label className="text-[10px] text-zinc-500 block mb-1">Neck (cm)</label>
                   <input
                     type="number"
@@ -229,10 +229,10 @@ export default function LogModal({
                     placeholder="38.5"
                     value={neck}
                     onChange={(e) => setNeck(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-center text-xs font-semibold text-zinc-100 outline-none focus:border-zinc-500"
+                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-1 text-center text-xs font-semibold text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
                   />
                 </div>
-                <div className="bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-900 text-center">
+                <div className="bg-zinc-50 dark:bg-zinc-900/50 p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-900 text-center">
                   <label className="text-[10px] text-zinc-500 block mb-1">Waist (cm)</label>
                   <input
                     type="number"
@@ -240,14 +240,14 @@ export default function LogModal({
                     placeholder="83.0"
                     value={waist}
                     onChange={(e) => setWaist(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-800 rounded px-2 py-1 text-center text-xs font-semibold text-zinc-100 outline-none focus:border-zinc-500"
+                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded px-2 py-1 text-center text-xs font-semibold text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 dark:focus:border-zinc-500"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 bg-zinc-100 hover:bg-white text-zinc-900 font-medium rounded-lg text-xs transition flex items-center justify-center gap-1.5 mt-2"
+                className="w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 font-medium rounded-lg text-xs transition flex items-center justify-center gap-1.5 mt-2"
               >
                 <Check className="w-3.5 h-3.5" /> Save Measurement
               </button>
