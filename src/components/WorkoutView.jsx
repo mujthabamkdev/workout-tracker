@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Plus, Trash2, Check, History, Calendar } from 'lucide-react';
+import { Play, Plus, Trash2, Check, History, Calendar, Flame, Activity } from 'lucide-react';
 import YouTubeModal from './YouTubeModal';
 
 export default function WorkoutView({
@@ -14,7 +14,28 @@ export default function WorkoutView({
   });
   const [videoModal, setVideoModal] = useState({ isOpen: false, name: '', url: '' });
 
+  // Interactive tracking of completed warmup & cooldown checklist items
+  const [completedWarmups, setCompletedWarmups] = useState({});
+  const [completedCooldowns, setCompletedCooldowns] = useState({});
+
   const currentDay = workoutPlan && workoutPlan.length > 0 ? workoutPlan[selectedDayIndex] : null;
+
+  // Extract warmup & cooldown lists with fallback support
+  const rawWarmup = currentDay?.warmup || currentDay?.preWorkout || currentDay?.warmUp || currentDay?.dynamicWarmup || [];
+  const warmupList = Array.isArray(rawWarmup) ? rawWarmup : (typeof rawWarmup === 'string' ? [rawWarmup] : []);
+
+  const rawCooldown = currentDay?.cooldown || currentDay?.postWorkout || currentDay?.coolDown || currentDay?.stretching || [];
+  const cooldownList = Array.isArray(rawCooldown) ? rawCooldown : (typeof rawCooldown === 'string' ? [rawCooldown] : []);
+
+  const toggleWarmupItem = (index) => {
+    const key = `${selectedDate}_${selectedDayIndex}_${index}`;
+    setCompletedWarmups(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleCooldownItem = (index) => {
+    const key = `${selectedDate}_${selectedDayIndex}_${index}`;
+    setCompletedCooldowns(prev => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const getPreviousLogForExercise = (exerciseName) => {
     const dates = Object.keys(workoutLogs || {})
@@ -140,6 +161,57 @@ export default function WorkoutView({
         </div>
       </div>
 
+      {/* Pre-Workout Warm-up & Dynamic Stretching */}
+      {warmupList.length > 0 && (
+        <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4 space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-zinc-900">
+            <div className="flex items-center gap-2">
+              <Flame className="w-4 h-4 text-zinc-400" />
+              <div>
+                <h3 className="text-xs sm:text-sm font-semibold text-zinc-200">
+                  Pre-Workout Warm-up & Dynamic Stretching
+                </h3>
+                <p className="text-[11px] text-zinc-500">
+                  Elevate heart rate, lubricate joints & prep movement patterns
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-zinc-500">
+              {warmupList.filter((_, idx) => completedWarmups[`${selectedDate}_${selectedDayIndex}_${idx}`]).length}/{warmupList.length} Done
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            {warmupList.map((item, idx) => {
+              const isDone = !!completedWarmups[`${selectedDate}_${selectedDayIndex}_${idx}`];
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => toggleWarmupItem(idx)}
+                  className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-left transition-colors text-xs ${
+                    isDone
+                      ? 'bg-zinc-900/60 border-zinc-800 text-zinc-500 line-through'
+                      : 'bg-zinc-900/20 border-zinc-900 hover:border-zinc-800 text-zinc-300'
+                  }`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 border transition-colors ${
+                      isDone
+                        ? 'bg-zinc-100 border-zinc-100 text-zinc-950'
+                        : 'border-zinc-800 text-transparent'
+                    }`}
+                  >
+                    <Check className="w-3 h-3" />
+                  </span>
+                  <span className="leading-snug">{item}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Exercises List */}
       <div className="space-y-4">
         {currentDay?.exercises?.map((exercise, exIdx) => {
@@ -204,6 +276,18 @@ export default function WorkoutView({
                   </button>
                 )}
               </div>
+
+              {/* Exercise Warm-up Protocol */}
+              {(exercise.warmupSets || exercise.warmup) && (
+                <div className="px-4 py-2 bg-zinc-950/70 border-b border-zinc-900 flex items-start gap-2 text-xs text-zinc-400">
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-zinc-500 shrink-0 mt-0.5">
+                    Warm-up:
+                  </span>
+                  <span className="leading-relaxed text-zinc-300 font-mono text-[11px]">
+                    {exercise.warmupSets || exercise.warmup}
+                  </span>
+                </div>
+              )}
 
               {/* Previous session stats banner */}
               {prevLog && (
@@ -330,6 +414,57 @@ export default function WorkoutView({
           );
         })}
       </div>
+
+      {/* Post-Workout Cool-Down & Static Stretching */}
+      {cooldownList.length > 0 && (
+        <div className="border border-zinc-900 bg-zinc-900/30 rounded-xl p-4 space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-zinc-900">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-zinc-400" />
+              <div>
+                <h3 className="text-xs sm:text-sm font-semibold text-zinc-200">
+                  Post-Workout Cool-Down & Static Stretching
+                </h3>
+                <p className="text-[11px] text-zinc-500">
+                  Down-regulate nervous system, release tightness & aid muscle recovery
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-zinc-500">
+              {cooldownList.filter((_, idx) => completedCooldowns[`${selectedDate}_${selectedDayIndex}_${idx}`]).length}/{cooldownList.length} Done
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            {cooldownList.map((item, idx) => {
+              const isDone = !!completedCooldowns[`${selectedDate}_${selectedDayIndex}_${idx}`];
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => toggleCooldownItem(idx)}
+                  className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-left transition-colors text-xs ${
+                    isDone
+                      ? 'bg-zinc-900/60 border-zinc-800 text-zinc-500 line-through'
+                      : 'bg-zinc-900/20 border-zinc-900 hover:border-zinc-800 text-zinc-300'
+                  }`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded mt-0.5 flex items-center justify-center shrink-0 border transition-colors ${
+                      isDone
+                        ? 'bg-zinc-100 border-zinc-100 text-zinc-950'
+                        : 'border-zinc-800 text-transparent'
+                    }`}
+                  >
+                    <Check className="w-3 h-3" />
+                  </span>
+                  <span className="leading-snug">{item}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <YouTubeModal
         isOpen={videoModal.isOpen}

@@ -38,15 +38,26 @@ The app supports importing structured plans using this format:
     {
       "day": "Day 1",
       "focus": "Upper Clavicular & Posterior Chain",
+      "warmup": [
+        "5 min incline treadmill walk or light row",
+        "Band pull-aparts & face pulls: 2x15",
+        "Arm circles & shoulder dislocates: 2x10"
+      ],
       "exercises": [
-          {
-            "name": "Incline Dumbbell Press",
-            "sets": 3,
-            "reps": "8-10",
-            "tempo": "3-1-1-0",
-            "form": "3s slow eccentric, pause 1s at deep chest stretch, push explosively without locking elbows",
-            "youtubeLink": "https://youtube.com/shorts/L9UKMQw1Nss"
-          }
+        {
+          "name": "Incline Dumbbell Press",
+          "sets": 3,
+          "reps": "8-10",
+          "tempo": "3-1-1-0",
+          "form": "3s slow eccentric, pause 1s at deep chest stretch, push explosively without locking elbows",
+          "warmupSets": "2 ramp-up sets: 1x12 @ 40%, 1x6 @ 70% working weight",
+          "youtubeLink": "https://youtube.com/shorts/L9UKMQw1Nss"
+        }
+      ],
+      "cooldown": [
+        "Doorway chest stretch: 2x30s per side",
+        "Cross-body rear delt stretch: 2x30s",
+        "Child's pose & deep diaphragmatic breathing: 60s"
       ]
     }
   ],

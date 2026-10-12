@@ -24,6 +24,12 @@ export const DEFAULT_WORKOUT_PLAN = [
   {
     day: "Day 1",
     focus: "Upper Clavicular & Posterior Chain",
+    warmup: [
+      "5 min incline treadmill walk or light cardio to elevate core temperature",
+      "Band pull-aparts & face pulls: 2 sets of 15 reps",
+      "Arm circles & shoulder dislocates with PVC/band: 2 sets of 10 reps",
+      "Cat-Cow & Thoracic rotations: 10 reps each side"
+    ],
     exercises: [
       {
         name: "Incline Dumbbell Press",
@@ -31,6 +37,7 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "8-10",
         tempo: "3-1-1-0",
         form: "3s slow eccentric, pause 1s at deep chest stretch, push explosively without locking elbows",
+        warmupSets: "2 ramp-up sets: 1x12 @ 40%, 1x6 @ 70% working weight",
         youtubeLink: "https://youtube.com/shorts/L9UKMQw1Nss?si=nNqGHraxdi2A4IIk"
       },
       {
@@ -39,6 +46,7 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "10-12",
         tempo: "2-0-1-1",
         form: "Lead with elbows, pause 1s in peak contraction, 2s controlled stretch on negative",
+        warmupSets: "1 feeler set: 1x10 @ 50% working weight",
         youtubeLink: "https://www.youtube.com/watch?v=0UBRfiO4zDs"
       },
       {
@@ -47,6 +55,7 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "12-15",
         tempo: "3-1-1-0",
         form: "Fix elbows beside ears, pause 1s at full elbow flexion, press forward and flare wrists",
+        warmupSets: "1 light set: 1x12 @ 50% working weight to lubricate elbow joints",
         youtubeLink: "https://www.youtube.com/watch?v=1u18yJQL_c8"
       },
       {
@@ -55,13 +64,26 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "10-12",
         tempo: "3-0-1-1",
         form: "Full stretch at bottom, supinate wrists on way up, hold peak contraction for 1s",
+        warmupSets: "1 light set: 1x10 @ 50% working weight",
         youtubeLink: "https://www.youtube.com/watch?v=soxrZlIl35U"
       }
+    ],
+    cooldown: [
+      "Doorway pectoral stretch: 2 sets of 30s per side",
+      "Cross-body rear delt shoulder stretch: 2 sets of 30s",
+      "Overhead lat & tricep stretch: 2 sets of 30s per arm",
+      "Child's pose & deep diaphragmatic nasal breathing: 60s"
     ]
   },
   {
     day: "Day 2",
     focus: "Lower Anterior & Core Stability",
+    warmup: [
+      "5 min stationary bike or stair climber (moderate pace)",
+      "Leg swings (front-to-back & side-to-side): 15 reps each leg",
+      "Bodyweight deep squats with 3s pause in hole: 2 sets of 10 reps",
+      "Glute bridges with 2s squeeze at top: 2 sets of 15 reps"
+    ],
     exercises: [
       {
         name: "Barbell Romanian Deadlift",
@@ -69,6 +91,7 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "8-10",
         tempo: "3-1-1-0",
         form: "Hinge at hips, keep bar close to shins, pause 1s at hamstring stretch, drive hips through",
+        warmupSets: "3 ramp-up sets: 1x10 empty bar, 1x6 @ 50%, 1x3 @ 75% working weight",
         youtubeLink: "https://www.youtube.com/watch?v=JCXUYuzwNrM"
       },
       {
@@ -77,6 +100,7 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "10-12",
         tempo: "3-1-1-0",
         form: "Descend for 3s, pause 1s hovering above floor, drive through front midfoot to rise",
+        warmupSets: "1 set bodyweight only: 8 reps per leg",
         youtubeLink: "https://www.youtube.com/watch?v=2C-uNgKwPLE"
       },
       {
@@ -85,6 +109,7 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "12-15",
         tempo: "2-2-1-2",
         form: "Drop heels for 2s stretch, explode up onto balls of feet, hold 2s hard contraction",
+        warmupSets: "1 bodyweight set: 15 reps full range of motion",
         youtubeLink: "https://www.youtube.com/watch?v=YMmgqO8Jo-k"
       },
       {
@@ -93,8 +118,15 @@ export const DEFAULT_WORKOUT_PLAN = [
         reps: "12-15",
         tempo: "2-0-1-1",
         form: "Curl pelvis upwards, pause 1s at top, lower under control without swinging hips",
+        warmupSets: "1 set lying dead-bugs or hollow body hold: 30s",
         youtubeLink: "https://www.youtube.com/watch?v=hdng3Nm1x_E"
       }
+    ],
+    cooldown: [
+      "Kneeling hip flexor & quad stretch: 2 sets of 30s each leg",
+      "Standing hamstring sweep & stretch: 2 sets of 30s per side",
+      "Pigeon pose / seated figure-4 glute stretch: 2 sets of 45s per side",
+      "Standing calf wall stretch: 30s each calf"
     ]
   }
 ];
