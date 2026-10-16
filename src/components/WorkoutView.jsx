@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Play, Plus, Trash2, Check, History, Calendar, Flame, Activity } from 'lucide-react';
 import YouTubeModal from './YouTubeModal';
+import { normalizeWorkoutPlan } from '../utils/storage';
 
 export default function WorkoutView({
   workoutPlan = [],
@@ -18,7 +19,12 @@ export default function WorkoutView({
   const [completedWarmups, setCompletedWarmups] = useState({});
   const [completedCooldowns, setCompletedCooldowns] = useState({});
 
-  const currentDay = workoutPlan && workoutPlan.length > 0 ? workoutPlan[selectedDayIndex] : null;
+  const rawDay = workoutPlan && workoutPlan.length > 0 ? workoutPlan[selectedDayIndex] : null;
+  const currentDay = useMemo(() => {
+    if (!rawDay) return null;
+    const [normalized] = normalizeWorkoutPlan([rawDay]);
+    return normalized;
+  }, [rawDay]);
 
   // Extract warmup & cooldown lists with fallback support
   const rawWarmup = currentDay?.warmup || currentDay?.preWorkout || currentDay?.warmUp || currentDay?.dynamicWarmup || [];
@@ -58,7 +64,8 @@ export default function WorkoutView({
       return dateLogs[exerciseName];
     }
 
-    const count = parseInt(targetSetsCount) || 3;
+    const parsedCount = parseInt(targetSetsCount, 10);
+    const count = isNaN(parsedCount) || parsedCount <= 0 ? 3 : parsedCount;
     return Array.from({ length: count }, (_, idx) => ({
       set: idx + 1,
       weight: '',
@@ -183,6 +190,7 @@ export default function WorkoutView({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
             {warmupList.map((item, idx) => {
+              const itemText = typeof item === 'object' && item !== null ? (item.name || item.title || '') : String(item);
               const isDone = !!completedWarmups[`${selectedDate}_${selectedDayIndex}_${idx}`];
               return (
                 <button
@@ -204,7 +212,7 @@ export default function WorkoutView({
                   >
                     <Check className="w-3 h-3" />
                   </span>
-                  <span className="leading-snug">{item}</span>
+                  <span className="leading-snug">{itemText}</span>
                 </button>
               );
             })}
@@ -437,6 +445,7 @@ export default function WorkoutView({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
             {cooldownList.map((item, idx) => {
+              const itemText = typeof item === 'object' && item !== null ? (item.name || item.title || '') : String(item);
               const isDone = !!completedCooldowns[`${selectedDate}_${selectedDayIndex}_${idx}`];
               return (
                 <button
@@ -458,7 +467,7 @@ export default function WorkoutView({
                   >
                     <Check className="w-3 h-3" />
                   </span>
-                  <span className="leading-snug">{item}</span>
+                  <span className="leading-snug">{itemText}</span>
                 </button>
               );
             })}

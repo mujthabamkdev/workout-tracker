@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Check, Copy, RotateCcw } from 'lucide-react';
-import { DEFAULT_WORKOUT_PLAN, DEFAULT_DIET_PLAN, DEFAULT_PROFILE } from '../utils/storage';
+import { DEFAULT_WORKOUT_PLAN, DEFAULT_DIET_PLAN, DEFAULT_PROFILE, normalizeWorkoutPlan } from '../utils/storage';
 
 export default function JsonManagerModal({
   isOpen,
@@ -87,9 +87,11 @@ export default function JsonManagerModal({
         throw new Error('"dietPlan" must be an object.');
       }
 
+      const normalizedWorkout = parsed.workoutPlan ? normalizeWorkoutPlan(parsed.workoutPlan) : null;
+
       onUpdatePlan({
         newProfile: parsed.profile || null,
-        newWorkoutPlan: parsed.workoutPlan || null,
+        newWorkoutPlan: normalizedWorkout,
         newDietPlan: parsed.dietPlan || null
       });
 

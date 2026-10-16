@@ -228,6 +228,61 @@ export function getYouTubeEmbedUrl(url) {
   }
 }
 
+// Normalize workout plan to ensure warm-up and cool-down/stretch items are properly segregated
+// into dedicated 'warmup' and 'cooldown' lists rather than cluttering 'exercises' with 0-set weight/reps tables.
+export function normalizeWorkoutPlan(plan) {
+  if (!Array.isArray(plan)) return plan;
+
+  return plan.map((day) => {
+    if (!day || typeof day !== 'object') return day;
+
+    // Existing warmup / cooldown items (normalize to string array)
+    const rawWarmup = day.warmup || day.preWorkout || day.warmUp || day.dynamicWarmup || [];
+    const warmupList = (Array.isArray(rawWarmup) ? rawWarmup : (typeof rawWarmup === 'string' ? [rawWarmup] : []))
+      .map((item) => (typeof item === 'object' && item !== null ? item.name || item.title || '' : String(item || '')))
+      .filter(Boolean);
+
+    const rawCooldown = day.cooldown || day.postWorkout || day.coolDown || day.stretching || [];
+    const cooldownList = (Array.isArray(rawCooldown) ? rawCooldown : (typeof rawCooldown === 'string' ? [rawCooldown] : []))
+      .map((item) => (typeof item === 'object' && item !== null ? item.name || item.title || '' : String(item || '')))
+      .filter(Boolean);
+
+    const exercises = [];
+
+    (day.exercises || []).forEach((ex) => {
+      if (!ex || typeof ex !== 'object') return;
+      const rawName = (ex.name || '').trim();
+      const setsNum = parseInt(ex.sets, 10);
+      const isZeroOrEmptySets = isNaN(setsNum) || setsNum === 0 || ex.sets === '' || ex.sets === 0;
+
+      const isWarmupPrefix = /^(warm[\s-]?up|dynamic\s+warm[\s-]?up|pre[\s-]?workout):?\s*/i.test(rawName);
+      const isCooldownPrefix = /^(cool[\s-]?down|static\s+stretch|cooldown|post[\s-]?workout):?\s*/i.test(rawName);
+
+      // If explicitly marked as warmup, or has 0/empty sets and mentions warmup/stretch
+      if (isWarmupPrefix || (isZeroOrEmptySets && /warm[\s-]?up/i.test(rawName))) {
+        const cleanName = rawName.replace(/^(warm[\s-]?up|dynamic\s+warm[\s-]?up|pre[\s-]?workout):?\s*/i, '').trim() || rawName;
+        if (!warmupList.includes(cleanName) && !warmupList.includes(rawName)) {
+          warmupList.push(cleanName);
+        }
+      } else if (isCooldownPrefix || (isZeroOrEmptySets && (/cool[\s-]?down/i.test(rawName) || /stretch/i.test(rawName)))) {
+        const cleanName = rawName.replace(/^(cool[\s-]?down|static\s+stretch|cooldown|post[\s-]?workout):?\s*/i, '').trim() || rawName;
+        if (!cooldownList.includes(cleanName) && !cooldownList.includes(rawName)) {
+          cooldownList.push(cleanName);
+        }
+      } else {
+        exercises.push(ex);
+      }
+    });
+
+    return {
+      ...day,
+      warmup: warmupList,
+      cooldown: cooldownList,
+      exercises
+    };
+  });
+}
+
 // Export AI Prompt 1: Workout Progression
 export function generateWorkoutAIExportPrompt(workoutLogs, profile, measurementLogs) {
   const today = new Date();
@@ -271,7 +326,19 @@ export function generateWorkoutAIExportPrompt(workoutLogs, profile, measurementL
   const weightStr = currentWeight && currentWeight !== "N/A" ? `${currentWeight} kg` : "[Weight not set]";
   const bfStr = currentBF ? `${currentBF}` : "[Body Fat % not calculated]";
 
-  return `Act as my fitness coach. Here is my workout log for the past 2 weeks:\n\n${workoutDump}\n\nMy current weight is ${weightStr} and body fat is ${bfStr}%. Provide feedback on my progressive overload and generate a NEW updated JSON for the next 4 weeks using the exact schema I provided previously.`;
+  return `Act as my fitness coach. Here is my workout log for the past 2 weeks:
+
+${workoutDump}
+
+My current weight is ${weightStr} and body fat is ${bfStr}%. Provide feedback on my progressive overload and generate a NEW updated JSON for the next 4 weeks using the exact schema I provided previously.
+
+CRITICAL SCHEMA RULES FOR WORKOUT PLAN:
+1. Warm-ups and Cool-downs/Stretches MUST NOT be placed inside the "exercises" array.
+2. Warm-ups must be placed in a "warmup" array under each day containing only names/descriptions as strings, e.g.:
+   "warmup": ["5 min light cardio", "Couch Stretch / Hip Flexor Lunge", "Dead Bugs"]
+3. Cool-downs/Stretches must be placed in a "cooldown" array under each day containing only names/descriptions as strings, e.g.:
+   "cooldown": ["Doorway Pectoral Stretch", "Lat & Upper Back Hang"]
+4. The "exercises" array must ONLY contain working resistance exercises with sets (> 0), reps, tempo, form, and youtubeLink. Do not create exercises with sets: 0 for warm-ups or stretches.`;
 }
 
 // Export AI Prompt 2: Diet Log

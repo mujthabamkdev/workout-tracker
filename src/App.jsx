@@ -19,7 +19,8 @@ import {
   DEFAULT_WORKOUT_LOGS,
   DEFAULT_DIET_LOGS,
   loadFromStorage,
-  saveToStorage
+  saveToStorage,
+  normalizeWorkoutPlan
 } from './utils/storage';
 
 export default function App() {
@@ -28,7 +29,7 @@ export default function App() {
   );
 
   const [workoutPlan, setWorkoutPlan] = useState(() =>
-    loadFromStorage(STORAGE_KEYS.WORKOUT_PLAN, DEFAULT_WORKOUT_PLAN)
+    normalizeWorkoutPlan(loadFromStorage(STORAGE_KEYS.WORKOUT_PLAN, DEFAULT_WORKOUT_PLAN))
   );
 
   const [dietPlan, setDietPlan] = useState(() =>
@@ -109,8 +110,9 @@ export default function App() {
 
   const handleUpdatePlan = ({ newWorkoutPlan, newDietPlan, newProfile }) => {
     if (newWorkoutPlan) {
-      setWorkoutPlan(newWorkoutPlan);
-      saveToStorage(STORAGE_KEYS.WORKOUT_PLAN, newWorkoutPlan);
+      const normalizedPlan = normalizeWorkoutPlan(newWorkoutPlan);
+      setWorkoutPlan(normalizedPlan);
+      saveToStorage(STORAGE_KEYS.WORKOUT_PLAN, normalizedPlan);
     }
     if (newDietPlan) {
       setDietPlan(newDietPlan);
